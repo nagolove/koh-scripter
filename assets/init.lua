@@ -1,5 +1,5 @@
-n, m = 40, 80
-g = 66000
+local n, m = 40, 80
+local g = 66000
 
 function display(b)
     if not b then
@@ -15,6 +15,7 @@ function display(b)
 end
 
 local b = {}
+local iter = 0
 
 local function reset()
     for i = 0, n - 1 do
@@ -23,19 +24,20 @@ local function reset()
             b[i][j] = 0
         end
     end
+
+    -- initialization
+    b[19][41] = 1
+    b[20][40] = 1
+    b[21][40] = 1
+    b[22][40] = 1
+    b[22][41] = 1
+    b[22][42] = 1
+    b[22][43] = 1
+    b[19][44] = 1
 end
 
 reset()
 
--- initialization
-b[19][41] = 1
-b[20][40] = 1
-b[21][40] = 1
-b[22][40] = 1
-b[22][41] = 1
-b[22][42] = 1
-b[22][43] = 1
-b[19][44] = 1
 local nm1, mm1 = n - 1, m - 1
 -- end of initialization
 
@@ -49,6 +51,7 @@ local function coro()
 
     -- Счетчик повторений
     for k = 1, g do
+        iter = k
 
         for i = 0, nm1 do
             local up, down
@@ -85,7 +88,7 @@ end
 C = coroutine.create(coro)
 
 function update()
-    coroutine.resume(C)
+    local status1, status2 = coroutine.resume(C)
 
     local cellw, cellh = 64, 64
     for i = 0, nm1 do
@@ -107,6 +110,19 @@ function update()
             DrawRectangleLines(cellw * j, cellh * i, 100, 100, BLACK)
         end
     end
+
+    if IsKeyPressed(KEY_R) then
+        C = coroutine.create(coro)
+        reset()
+    end
+
+    local msg = "iteration " .. iter
+    local x, y = 30, 500
+    DrawText(msg, x, y, 140, GREEN)
+
+    local msg = "status1 " .. tostring(status1) .. " status2 " .. tostring(status2)
+    y = y + 140
+    DrawText(msg, x, y, 140, GREEN)
 
 end
 
