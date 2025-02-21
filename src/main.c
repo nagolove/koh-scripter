@@ -1,7 +1,7 @@
 // vim: set colorcolumn=85
 // vim: fdm=marker
 
-#include "koh_script.h"
+#include "koh_lua.h"
 #include "koh_stages.h"
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -31,6 +31,7 @@
 #include <string.h>
 #include "rlwr.h"
 #include "koh_inotifier.h"
+#include "koh_lua.h"
 // }}}
 
 Color color_background_clear = GRAY;
@@ -58,6 +59,7 @@ static Camera2D cam = {
     .zoom = 1.,
 };
 static lua_State *l = NULL;
+// Создает Луа состояние с raylib окружением.
 static rlwr_t *rlwr = NULL;
 static const char *init_lua = "assets/init.lua";
 static char error[256] = {};
@@ -263,7 +265,6 @@ int main(int argc, char **argv) {
 #endif
 
     rlwr_free(rlwr);
-    /*lua_close(l);*/
 
     stage_shutdown(ss);// добавить в систему инициализации
     koh_music_shutdown();       // добавить в систему инициализации
