@@ -118,10 +118,13 @@ static void update(void) {
     BeginDrawing();
     ClearBackground(color_background_clear);
 
-    L_call(l, "update");
+    static bool is_ok = false;
+    const char *pcall_err = L_call(l, "update", &is_ok);
+    if (!is_ok)
+        strncpy(error, pcall_err, sizeof(error));
 
     if (strlen(error))
-        DrawText(error, 0, 0, 40, BLACK);
+        DrawText(error, 0, 0, 70, BLACK);
 
     hotkey_process(&hk_store);
     console_check_editor_mode();
